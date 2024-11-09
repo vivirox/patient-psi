@@ -4,7 +4,7 @@ module.exports = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'avatars.githubusercontent.com',
+        hostname: 'patient.gemcity.xyz',
         port: '',
         pathname: '**'
       }
