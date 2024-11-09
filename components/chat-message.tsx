@@ -39,15 +39,17 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
             p({ children }) {
               return <p className="mb-2 last:mb-0">{children}</p>
             },
-            code({ node, inline, className, children, ...props }) {
-              if (children.length) {
+            code({ node, inline, className, children, ...props }: { node?: any; inline?: boolean; className?: string; children?: React.ReactNode }) {
+              if (children && (Array.isArray(children) || typeof children === 'string') && children.length) {
                 if (children[0] == '▍') {
                   return (
                     <span className="mt-1 cursor-default animate-pulse">▍</span>
                   )
                 }
 
-                children[0] = (children[0] as string).replace('`▍`', '▍')
+                const newChildren = [...children];
+                newChildren[0] = (newChildren[0] as string).replace('`▍`', '▍');
+                children = newChildren;
               }
 
               const match = /language-(\w+)/.exec(className || '')
