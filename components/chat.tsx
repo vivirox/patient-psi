@@ -17,10 +17,10 @@ import { DiagramList } from './diagram-list'
 import { PatientProfile, initialProfile } from '@/app/api/data/patient-profiles'
 
 export interface ChatProps extends React.ComponentProps<'div'> {
-  initialMessages?: Message[]
+  initialMessages?: Array<Message>
   id?: string
   session?: Session
-  missingKeys: string[]
+  missingKeys: Array<string>
 }
 
 export function Chat({ id, className, session, missingKeys }: ChatProps) {
@@ -30,16 +30,14 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
   const [messages] = useUIState()
   const [aiState] = useAIState()
 
-  const [_, setNewChatId] = useLocalStorage('newChatId', id)
+  const [, setNewChatId] = useLocalStorage('newChatId', id)
   const [isStarted, setIsStarted] = useState(false);
   const [patientProfile, setPatientProfile] = useState<PatientProfile>(initialProfile);
 
 
   useEffect(() => {
-    if (session?.user) {
-      if (!path.includes('chat') && messages.length === 1) {
-        window.history.replaceState({}, '', `/chat/${id}`)
-      }
+    if (session?.user && (!path.includes('chat') && messages.length === 1)) {
+      window.history.replaceState({}, '', `/chat/${id}`)
     }
   }, [id, path, session?.user, messages])
 
@@ -69,8 +67,6 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
 
   const handleSetPatientProfile = (patientProfile: PatientProfile) => {
     setPatientProfile(patientProfile);
-    console.log("profile");
-    console.log(patientProfile);
   }
 
 
@@ -96,13 +92,7 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
           </>
         ) : (
           <>
-            {!isStarted ? (
-              <div className={cn('pb-[200px] pt-4 md:pt-10', className)} ref={messagesRef}>
-                <StartSession
-                  onStartedChange={handleStartedChange}
-                  onSetPatientProfile={handleSetPatientProfile} />
-              </div>
-            ) : (
+            {isStarted ? (
               <>
                 <div className={cn('pb-[200px] pt-4 md:pt-10', className)} ref={messagesRef}>
                   <div className="mx-auto max-w-2xl px-4">
@@ -136,7 +126,13 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
                   isAtBottom={isAtBottom}
                   scrollToBottom={scrollToBottom}
                 />
-              </>)
+              </>) : (
+              <div className={cn('pb-[200px] pt-4 md:pt-10', className)} ref={messagesRef}>
+                <StartSession
+                  onStartedChange={handleStartedChange}
+                  onSetPatientProfile={handleSetPatientProfile} />
+              </div>
+            )
             }
           </>
         )}

@@ -26,11 +26,10 @@ export function PromptForm({
   input: string
   setInput: (value: string) => void
 }) {
-  const router = useRouter()
   const { formRef, onKeyDown } = useEnterSubmit()
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
   const { submitUserMessage } = useActions()
-  const [_, setMessages] = useUIState<typeof AI>()
+  const [, setMessages] = useUIState<typeof AI>()
 
   React.useEffect(() => {
     if (inputRef.current) {
@@ -46,7 +45,7 @@ export function PromptForm({
 
         // Blur focus on mobile
         if (window.innerWidth < 600) {
-          e.target['message']?.blur()
+          e.target.message?.blur()
         }
 
         const value = input.trim()
