@@ -4,7 +4,6 @@ import {
   createAI,
   getMutableAIState,
   getAIState,
-  render,
   createStreamableValue
 } from 'ai/rsc'
 import OpenAI from 'openai'
@@ -25,6 +24,13 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || 'sk-bf366a60261243b9a126acfb8c3aa45a'
 })
 
+async function testCompletion() {
+  const completion = await openai.chat.completions.create({
+    model: 'heallama',
+    messages: [{ role: 'user', content: 'Why is the sky blue?' }]
+  })
+  return completion;
+}
 
 async function submitUserMessage(content: string, type: string) {
   'use server'
@@ -46,7 +52,7 @@ async function submitUserMessage(content: string, type: string) {
   let textStream: undefined | ReturnType<typeof createStreamableValue<string>>
   let textNode: undefined | React.ReactNode
 
-  const ui = render({
+  const ui = streamUI({
     model: 'gpt-4',
     provider: openai,
     initial: <SpinnerMessage />,
@@ -58,10 +64,10 @@ async function submitUserMessage(content: string, type: string) {
       ...aiState.get().messages.map((message: any) => ({
         role: message.role,
         content: message.content,
-        name: message.name
+        name: message.name || ''
       }))
     ],
-    text: ({ content, done, delta }) => {
+    text: ({ content, done, delta }: { content: string, done: boolean, delta: string }) => {
       if (!textStream) {
         textStream = createStreamableValue('')
         textNode = <BotMessage content={textStream.value} />
@@ -76,7 +82,7 @@ async function submitUserMessage(content: string, type: string) {
             {
               id: nanoid(),
               role: 'assistant',
-              content,
+              content
             }
           ]
         })
@@ -174,3 +180,22 @@ export const getUIStateFromAIState = (aiState: Chat) => {
         )
     }))
 }
+async function* streamUI({ model, provider, initial, messages, text }: { model: string, provider: OpenAI, initial: React.ReactNode, messages: Array<{ role: string, content: string, name?: string }>, text: ({ content, done, delta }: { content: string, done: boolean, delta: string }) => React.ReactNode }) {
+  const response = await provider.chat.completions.create({
+    model,
+    messages: messages.map(msg => ({
+      role: msg.role as 'system' | 'user' | 'assistant',
+      content: msg.content,
+      ...(msg.name && { name: msg.name })
+    })),
+    stream: true
+  })
+  yield initial;
+
+  for await (const chunk of response) {
+    const content = chunk.choices[0].delta.content;
+    const done = chunk.choices[0].finish_reason === 'stop';
+    yield text({ content: content ?? '', done, delta: content ?? '' });
+  }
+}
+
