@@ -21,7 +21,8 @@ import { getPrompt } from '@/app/api/getDataFromKV'
 
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || ''
+  baseURL: process.env.OPENAI_BASE_URL || 'http://localhost:11434/v1',
+  apiKey: process.env.OPENAI_API_KEY || 'sk-bf366a60261243b9a126acfb8c3aa45a'
 })
 
 
@@ -102,13 +103,13 @@ export type Message = {
 
 export type AIState = {
   chatId: string
-  messages: Message[]
+  messages: Array<Message>
 }
 
-export type UIState = {
+export type UIState = Array<{
   id: string
   display: React.ReactNode
-}[]
+}>
 
 export const AI = createAI<AIState, UIState>({
   actions: {
@@ -116,28 +117,27 @@ export const AI = createAI<AIState, UIState>({
   },
   initialUIState: [],
   initialAIState: { chatId: nanoid(), messages: [] },
-  unstable_onGetUIState: async () => {
+  onGetUIState: async () => {
     'use server'
 
     const session = await auth()
 
-    if (session && session.user) {
+    if (session?.user) {
       const aiState = getAIState()
 
       if (aiState) {
-        const uiState = getUIStateFromAIState(aiState)
-        return uiState
+        return getUIStateFromAIState(aiState as Chat)
       }
     } else {
       return
     }
   },
-  unstable_onSetAIState: async ({ state, done }) => {
+  onSetAIState: async ({ state, done }) => {
     'use server'
 
     const session = await auth()
 
-    if (session && session.user) {
+    if (session?.user) {
       const { chatId, messages } = state
 
       const createdAt = new Date()
@@ -155,9 +155,9 @@ export const AI = createAI<AIState, UIState>({
       }
 
       await saveChat(chat)
-    } else {
-      return
+      return;
     }
+    return
   }
 })
 

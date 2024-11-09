@@ -40,7 +40,7 @@ yarn-error.log*
 !profiles.json
 !.env.example
 !python/.env
-
+/python/.env
 
 # cache
 __pycache__
