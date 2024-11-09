@@ -47,9 +47,9 @@ export function BotMessage({
             p({ children }) {
               return <p className="mb-2 last:mb-0">{children}</p>
             },
-            code({ node, inline, className, children, ...props }) {
-              if (children.length) {
-                if (children[0] == '▍') {
+            code({ node, inline, className, children, ...props }: any) {
+              if (Array.isArray(children) && children.length) {
+                if (children[0] === '▍') {
                   return (
                     <span className="mt-1 animate-pulse cursor-default">▍</span>
                   )
