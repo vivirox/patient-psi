@@ -6,6 +6,7 @@ import { getChat, getMissingKeys } from '@/app/actions'
 import { Chat } from '@/components/chat'
 import { AI } from '@/lib/chat/actions'
 import { Session } from '@/lib/types'
+import type { Message } from '@/lib/chat/actions'
 
 export interface ChatPageProps {
   params: {
@@ -47,12 +48,16 @@ export default async function ChatPage({ params }: ChatPageProps) {
     notFound()
   }
 
+  const filteredMessages = chat.messages.filter((message): message is Message => 
+    ['user', 'system', 'assistant', 'data'].includes(message.role) && message.role !== 'function'
+  );
+
   return (
-    <AI initialAIState={{ chatId: chat.id, messages: chat.messages }}>
+    <AI initialAIState={{ chatId: chat.id, messages: filteredMessages }}>
       <Chat
         id={chat.id}
         session={session}
-        initialMessages={chat.messages}
+        initialMessages={filteredMessages}
         missingKeys={missingKeys}
       />
     </AI>
