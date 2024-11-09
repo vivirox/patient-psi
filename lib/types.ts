@@ -7,7 +7,7 @@ export interface Chat extends Record<string, any> {
   createdAt: Date
   userId: string
   path: string
-  messages: Message[]
+  messages: Array<Message>
   sharePath?: string
 }
 
@@ -15,27 +15,27 @@ export interface CCDResult extends Record<string, any> {
   userId: string;
   chatId: string;
   createdAt: Date;
-  checkedHelpless: {
+  checkedHelpless: Array<{
     id: string;
     label: string;
-  }[];
-  checkedUnlovable: {
+  }>;
+  checkedUnlovable: Array<{
     id: string;
     label: string;
-  }[];
-  checkedWorthless: {
+  }>;
+  checkedWorthless: Array<{
     id: string;
     label: string;
-  }[];
+  }>;
   intermediateBelief: string;
   intermediateBeliefDepression: string;
   copingStrategies: string;
   situation: string;
   autoThought: string;
-  checkedEmotion: {
+  checkedEmotion: Array<{
     id: string;
     label: string;
-  }[];
+  }>;
   behavior: string;
 }
 

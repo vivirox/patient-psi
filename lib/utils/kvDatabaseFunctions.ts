@@ -15,17 +15,10 @@ async function storeDataToKV() {
         for (const profile of jsonData) {
             const id = profile.id;
             const key = `profile_${id}`;
-
-            await kv.set(key, JSON.stringify(profile));
-            console.log(`Data for ${id} stored successfully with key ${key}`);
-
         }
     } catch (error) {
         console.error('Error storing data to KV:', error);
-    }
 }
-
-
 
 async function deleteAllProfilesFromKV() {
     try {
@@ -37,38 +30,31 @@ async function deleteAllProfilesFromKV() {
             const key = `profile_${id}`;
 
             await kv.del(key);
-            console.log(`Profile with key ${key} deleted successfully`);
         }
-
-        console.log('All profiles deleted successfully');
-    } catch (error) {
-        console.error('Error deleting profiles from KV:', error);
     }
+    catch (error) { console.error('Error deleting profiles:', error)}
 }
-
 
 async function deleteCustomPrefixFromKV(prefix: string) {
-    try {
-        const keys = await kv.keys(prefix);
+        try {
+            const keys = await kv.keys(prefix);
 
-        for (const key of keys) {
-            await kv.del(key);
-            console.log(key, 'deleted successfully');
+            for (const key of keys) {
+                await kv.del(key);
+            }
+        } catch (error) {
+            console.error('Error retrieving keys:', error);
         }
-    } catch (error) {
-        console.error('Error retrieving keys:', error);
+}
+
+    async function assignParticipantSessions(userId: string, sessions: Array<string>) {
+        const key = `assigned:${userId}`;
+        const value = {
+            'sessions': sessions
+        };
+        await kv.set(key, JSON.stringify(value));
     }
 }
-
-
-async function assignParticipantSessions(userId: string, sessions: string[]) {
-    const key = `assigned:${userId}`;
-    const value = {
-        'sessions': sessions
-    };
-    await kv.set(key, JSON.stringify(value));
-}
-
 
 storeDataToKV();
 
@@ -84,4 +70,4 @@ storeDataToKV();
 
 // curr_profile:${userId}
 // type:${userId}:${chatId}
-// assigned:${userId}
+// assigned:${userId}}}
