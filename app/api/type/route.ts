@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
         const type = await kv.get(`curr_type_${userId}`) as string;
         await kv.set(`type:${userId}:${chatId}`, type);
 
-        return NextResponse.json({ type: type });
+        return NextResponse.json({ type });
     } catch (error) {
         console.error('Error fetching patient type:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

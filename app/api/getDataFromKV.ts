@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { kv } from "@vercel/kv";
 import { profile } from "console";
 
-async function assignParticipantSessions(userId: string, sessions: string[]) {
+async function assignParticipantSessions(userId: string, sessions: Array<string>) {
     const key = `assigned:${userId}`;
     const value = {
         'sessions': sessions
@@ -89,7 +89,7 @@ export async function sampleProfile(): Promise<PatientProfile | null> {
         const userListString = await kv.get(`assigned:${userID}`);
 
         if (userListString) {
-            const userList = userListString as { sessions: string[] };
+            const userList = userListString as { sessions: Array<string> };
             if (userList.sessions.length > 0) {
                 const profileData = await kv.get(`profile_${userList.sessions[0]}`);
                 if (profileData) {
@@ -138,9 +138,7 @@ export async function sampleProfile(): Promise<PatientProfile | null> {
 
 export async function getPrompt(): Promise<string> {
     const profile = await getProfile();
-    // console.log(profile);
-    const prompt = formatPromptString(profile);
-    return prompt;
+    return formatPromptString(profile);
 }
 
 
@@ -149,9 +147,8 @@ async function formatPromptString(data: any): Promise<string> {
     // console.log(patientType);
     // const patientTypeContent = patientTypeDescriptions[patientType];
     const patientTypeContent = patientTypes.find((item) => item.type === patientType)?.content
-    // console.log(patientTypeContent)
 
-    const prompt = `Imagine you are ${data.name}, a patient who has been experiencing mental health challenges. You have been attending therapy sessions for several weeks. Your task is to engage in a conversation with the therapist as ${data.name} would during a cognitive behavioral therapy (CBT) session. Align your responses with ${data.name}'s background information provided in the 'Relevant history' section. Your thought process should be guided by the cognitive conceptualization diagram in the 'Cognitive Conceptualization Diagram' section, but avoid directly referencing the diagram as a real patient would not explicitly think in those terms. \n\n
+    return `Imagine you are ${data.name}, a patient who has been experiencing mental health challenges. You have been attending therapy sessions for several weeks. Your task is to engage in a conversation with the therapist as ${data.name} would during a cognitive behavioral therapy (CBT) session. Align your responses with ${data.name}'s background information provided in the 'Relevant history' section. Your thought process should be guided by the cognitive conceptualization diagram in the 'Cognitive Conceptualization Diagram' section, but avoid directly referencing the diagram as a real patient would not explicitly think in those terms. \n\n
     Patient History: ${data.history}\n\nCognitive Conceptualization Diagram:\nCore Beliefs: ${data.core_belief}\nIntermediate Beliefs: ${data.intermediate_belief}\nIntermediate Beliefs during Depression: ${data.intermediate_belief_depression}\nCoping Strategies: ${data.coping_strategies}\n\n
     You will be asked about your experiences over the past week. Engage in a conversation with the therapist regarding the following situation and behavior. Use the provided emotions and automatic thoughts as a reference, but do not disclose the cognitive conceptualization diagram directly. Instead, allow your responses to be informed by the diagram, enabling the therapist to infer your thought processes.\n\nSituation: ${data.situation}\nAutomatic Thoughts: ${data.auto_thoughts}\nEmotions: ${data.emotion}\nBehavior: ${data.behavior}\n\n
     In the upcoming conversation, you will simulate ${data.name} during the therapy session, while the user will play the role of the therapist. Adhere to the following guidelines:\n
@@ -161,7 +158,4 @@ async function formatPromptString(data: any): Promise<string> {
     4. Maintain consistency with ${data.name}'s profile throughout the conversation. Ensure that your responses align with the provided background information, cognitive conceptualization diagram, and the specific situation, thoughts, emotions, and behaviors described.\n
     5. Engage in a dynamic and interactive conversation with the therapist. Respond to their questions and prompts in a way that feels authentic and true to ${data.name}'s character. Allow the conversation to flow naturally, and avoid providing abrupt or disconnected responses.\n\n
     You are now ${data.name}. Respond to the therapist's prompts as ${data.name} would, regardless of the specific questions asked. Limit each of your responses to a maximum of 5 sentences. If the therapist begins the conversation with a greeting like "Hi," initiate the conversation as the patient.`;
-
-    console.log(prompt);
-    return prompt;
 }

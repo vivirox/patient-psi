@@ -22,6 +22,6 @@ export const diagramTitleMapping: { [key: string]: string } = {
     'behavior': 'Behavior(s)',
 }
 
-export const diagramRelated: string[] = ['coreBelief', 'intermediateBelief', 'copingStrategies']
+export const diagramRelated: Array<string> = ['coreBelief', 'intermediateBelief', 'copingStrategies']
 
-export const diagramCCD: string[] = ['situation', 'autoThought', 'emotion', 'behavior']
+export const diagramCCD: Array<string> = ['situation', 'autoThought', 'emotion', 'behavior']

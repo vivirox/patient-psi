@@ -47,18 +47,13 @@ export async function authenticate(
         }
     } catch (error) {
         if (error instanceof AuthError) {
-            switch (error.type) {
-                case 'CredentialsSignin':
-                    return {
-                        type: 'error',
-                        resultCode: ResultCode.InvalidCredentials
-                    };
-                default:
-                    return {
-                        type: 'error',
-                        resultCode: ResultCode.UnknownError
-                    };
-            }
+            return error.type === 'CredentialsSignin' ? {
+                type: 'error',
+                resultCode: ResultCode.InvalidCredentials
+            } : {
+                type: 'error',
+                resultCode: ResultCode.UnknownError
+            };
         }
     }
 }

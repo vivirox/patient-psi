@@ -15,6 +15,10 @@ export interface UserMenuProps {
 }
 
 function getUserInitials(name: string) {
+  if (typeof name !== 'string') {
+    return ''
+  }
+
   const [firstName, lastName] = name.split(' ')
   return lastName ? `${firstName[0]}${lastName[0]}` : firstName.slice(0, 2)
 }

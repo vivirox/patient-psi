@@ -18,21 +18,20 @@ export async function createUser(
             type: 'error',
             resultCode: ResultCode.UserAlreadyExists
         };
-    } else {
-        const user = {
-            // id: crypto.randomUUID(),
-            id: participantId
-            // email,
-            // password: hashedPassword,
-            // salt
-        };
-
-        // await kv.hmset(`user:${email}`, user);
-        await kv.hmset(`user:${participantId}`, user);
-
-        return {
-            type: 'success',
-            resultCode: ResultCode.UserCreated
-        };
     }
+    const user = {
+        // id: crypto.randomUUID(),
+        id: participantId
+        // email,
+        // password: hashedPassword,
+        // salt
+    };
+
+    // await kv.hmset(`user:${email}`, user);
+    await kv.hmset(`user:${participantId}`, user);
+
+    return {
+        type: 'success',
+        resultCode: ResultCode.UserCreated
+    };
 }

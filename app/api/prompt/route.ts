@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     try {
         const profile = await sampleProfile();
         await setProfile(profile);
-        return NextResponse.json({ profile: profile });
+        return NextResponse.json({ profile });
     } catch (error) {
         return NextResponse.json({ error: 'Internal Server Error in GET' }, { status: 500 });
     }

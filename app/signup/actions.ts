@@ -21,22 +21,21 @@ export async function createUser(
       type: 'error',
       resultCode: ResultCode.UserAlreadyExists
     }
-  } else {
-    const user = {
-      // id: crypto.randomUUID(),
-      id: participantId
-      // email,
-      // password: hashedPassword,
-      // salt
-    }
+  }
+  const user = {
+    // id: crypto.randomUUID(),
+    id: participantId
+    // email,
+    // password: hashedPassword,
+    // salt
+  }
 
-    // await kv.hmset(`user:${email}`, user)
-    await kv.hmset(`user:${participantId}`, user)
+  // await kv.hmset(`user:${email}`, user)
+  await kv.hmset(`user:${participantId}`, user)
 
-    return {
-      type: 'success',
-      resultCode: ResultCode.UserCreated
-    }
+  return {
+    type: 'success',
+    resultCode: ResultCode.UserCreated
   }
 }
 
@@ -92,18 +91,13 @@ export async function signup(
       return result
     } catch (error) {
       if (error instanceof AuthError) {
-        switch (error.type) {
-          case 'CredentialsSignin':
-            return {
-              type: 'error',
-              resultCode: ResultCode.InvalidCredentials
-            }
-          default:
-            return {
-              type: 'error',
-              resultCode: ResultCode.UnknownError
-            }
-        }
+        return error.type === 'CredentialsSignin' ? {
+          type: 'error',
+          resultCode: ResultCode.InvalidCredentials
+        } : {
+          type: 'error',
+          resultCode: ResultCode.UnknownError
+        };
       } else {
         return {
           type: 'error',
