@@ -18,7 +18,7 @@ export const useScrollAnchor = () => {
   }, [])
 
   useEffect(() => {
-    if (messagesRef.current && (isAtBottom && !isVisible)) {
+    if (messagesRef.current && isAtBottom && !isVisible) {
       messagesRef.current.scrollIntoView({
         block: 'end'
       })
@@ -29,7 +29,7 @@ export const useScrollAnchor = () => {
     const { current } = scrollRef
 
     if (!current) {
-      return;
+      return
     }
     const handleScroll = (event: Event) => {
       const target = event.target as HTMLDivElement
@@ -51,7 +51,7 @@ export const useScrollAnchor = () => {
 
   useEffect(() => {
     if (!visibilityRef.current) {
-      return;
+      return
     }
     const observer = new IntersectionObserver(
       entries => {

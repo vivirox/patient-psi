@@ -30,7 +30,9 @@ export default function LoginForm() {
       className="flex flex-col items-center gap-4 space-y-3"
     >
       <div className="w-full flex-1 rounded-lg border bg-white px-6 pb-4 pt-8 shadow-md  md:w-96 dark:bg-zinc-950">
-        <h1 className="mb-3 text-2xl font-bold">Please log in with your assigned Participant ID.</h1>
+        <h1 className="mb-3 text-2xl font-bold">
+          Please log in with your assigned Participant ID.
+        </h1>
         <div className="w-full">
           <div>
             <label
@@ -50,7 +52,6 @@ export default function LoginForm() {
               />
             </div>
           </div>
-
         </div>
         <LoginButton />
       </div>

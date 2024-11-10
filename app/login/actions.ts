@@ -61,13 +61,15 @@ export async function authenticate(
     }
   } catch (error) {
     if (error instanceof AuthError) {
-      return error.type === 'CredentialsSignin' ? {
-        type: 'error',
-        resultCode: ResultCode.InvalidCredentials
-      } : {
-        type: 'error',
-        resultCode: ResultCode.UnknownError
-      };
+      return error.type === 'CredentialsSignin'
+        ? {
+            type: 'error',
+            resultCode: ResultCode.InvalidCredentials
+          }
+        : {
+            type: 'error',
+            resultCode: ResultCode.UnknownError
+          }
     }
   }
 }

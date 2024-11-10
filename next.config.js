@@ -1,19 +1,17 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'patient.gemcity.xyz',
-        port: '',
-        pathname: '**'
-      }
-    ]
+export const images = {
+  remotePatterns: [
+    {
+      protocol: 'https',
+      hostname: 'patient.gemcity.xyz',
+      port: '',
+      pathname: '**'
+    }
+  ]
+};
+export const serverRuntimeConfig = {
+  logger: {
+    level: 'info',
   },
-  serverRuntimeConfig: {
-    logger: {
-      level: 'info',
-    },
-    serverPath: 'app/api',
-  }
-}
+  serverPath: 'app/api',
+};

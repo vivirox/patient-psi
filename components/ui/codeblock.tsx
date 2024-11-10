@@ -3,13 +3,18 @@
 
 'use client'
 
-import { FC, memo } from 'react'
+import { FC, memo, useEffect, useState } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { coldarkDark } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 
-import { useCopyToClipboard } from '@/lib/hooks/use-copy-to-clipboard'
 import { IconCheck, IconCopy, IconDownload } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
+import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
+
+interface Props {
+  language: string
+  value: string
+}
 
 interface Props {
   language: string
@@ -47,7 +52,10 @@ export const programmingLanguages: languageMap = {
   // add more file extensions here, make sure the key is same as language prop in CodeBlock.tsx component
 }
 
-export const generateRandomString = (length: number, lowercase = false) => {
+export const generateRandomString = (
+  length: number,
+  lowercase = false
+): string => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXY3456789' // excluding similar looking characters like Z, 2, I, 1, O, 0
   let result = ''
   for (let i = 0; i < length; i++) {
@@ -143,6 +151,8 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
     </div>
   )
 })
+
+CodeBlock.displayName = 'CodeBlock'
 CodeBlock.displayName = 'CodeBlock'
 
 export { CodeBlock }

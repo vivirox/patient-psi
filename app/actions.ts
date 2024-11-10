@@ -5,8 +5,8 @@ import { redirect } from 'next/navigation'
 import { kv } from '@vercel/kv'
 
 import { auth } from '@/auth'
+import { Session } from 'next-auth'
 import { CCDResult, CCDTruth, type Chat } from '@/lib/types'
-import { pipe } from 'framer-motion'
 
 export async function getChats(userId?: string | null) {
   if (!userId) {
@@ -41,14 +41,14 @@ export async function getChat(id: string, userId: string) {
   return chat
 }
 
-export async function removeChat({ id, path }: { id: string; path: string }) {
-  const session = await auth()
-
-  if (!session) {
-    return {
-      error: 'Unauthorized'
+  export async function deleteChat(id: string, path: string) {
+    const session = await auth() as Session | null
+  
+    if (!session) {
+      return {
+        error: 'Unauthorized'
+      }
     }
-  }
 
   //Convert uid to string for consistent comparison with session.user.id
   const uid = String(await kv.hget(`chat:${id}`, 'userId'))
@@ -66,13 +66,12 @@ export async function removeChat({ id, path }: { id: string; path: string }) {
 
   // remove corresponding diagram history
 
-
   revalidatePath('/')
   return revalidatePath(path)
 }
 
 export async function clearChats() {
-  const session = await auth()
+  const session = await auth() as Session | null
 
   if (!session?.user?.id) {
     return {
@@ -80,7 +79,11 @@ export async function clearChats() {
     }
   }
 
-  const chats: Array<string> = await kv.zrange(`user:chat:${session.user.id}`, 0, -1)
+  const chats: Array<string> = await kv.zrange(
+    `user:chat:${session.user.id}`,
+    0,
+    -1
+  )
   if (!chats.length) {
     return redirect('/')
   }
@@ -108,7 +111,7 @@ export async function getSharedChat(id: string) {
 }
 
 export async function shareChat(id: string) {
-  const session = await auth()
+  const session = await auth() as Session | null
 
   if (!session?.user?.id) {
     return {
@@ -135,7 +138,7 @@ export async function shareChat(id: string) {
 }
 
 export async function saveChat(chat: Chat) {
-  const session = await auth()
+  const session = await auth() as Session | null
 
   if (session?.user) {
     const pipeline = kv.pipeline()
@@ -145,7 +148,7 @@ export async function saveChat(chat: Chat) {
       member: `chat:${chat.id}`
     })
     await pipeline.exec()
-    return;
+    return
   }
   return
 }
@@ -161,51 +164,44 @@ export async function getMissingKeys() {
     .filter(key => key !== '')
 }
 
-
 export async function getCCDResult(userId: string, chatId: string) {
-  const ccdResultKey = `ccdResult:${userId}:${chatId}`;
-  const ccdResult = await kv.hgetall<CCDResult>(ccdResultKey);
+  const ccdResultKey = `ccdResult:${userId}:${chatId}`
+  const ccdResult = await kv.hgetall<CCDResult>(ccdResultKey)
 
-  return ccdResult && Object.keys(ccdResult).length > 0 ? ccdResult : null;
+  return ccdResult && Object.keys(ccdResult).length > 0 ? ccdResult : null
 }
-
 
 export async function saveCCDResult(ccdResult: CCDResult) {
-  const session = await auth()
+  const session = await auth() as Session | null
 
   if (session?.user) {
     const pipeline = kv.pipeline()
-    const ccdResultKey = `ccdResult:${ccdResult.userId}:${ccdResult.chatId}`;
+    const ccdResultKey = `ccdResult:${ccdResult.userId}:${ccdResult.chatId}`
     pipeline.hmset(ccdResultKey, ccdResult)
     await pipeline.exec()
-    return;
+    return
   }
   return
 }
 
-
 export async function getCCDTruth(userId: string, chatId: string) {
-  const ccdTruthKey = `ccdTruth:${userId}:${chatId}`;
-  const ccdTruth = await kv.hgetall<CCDTruth>(ccdTruthKey);
+  const ccdTruthKey = `ccdTruth:${userId}:${chatId}`
+  const ccdTruth = await kv.hgetall<CCDTruth>(ccdTruthKey)
 
-  return ccdTruth && Object.keys(ccdTruth).length > 0 ? ccdTruth : null;
+  return ccdTruth && Object.keys(ccdTruth).length > 0 ? ccdTruth : null
 }
 
-
 export async function saveCCDTruth(ccdTruth: CCDTruth) {
-  const session = await auth()
+  const session = await auth() as Session | null
 
   if (session?.user) {
     const pipeline = kv.pipeline()
-    const ccdTruthKey = `ccdTruth:${ccdTruth.userId}:${ccdTruth.chatId}`;
+    const ccdTruthKey = `ccdTruth:${ccdTruth.userId}:${ccdTruth.chatId}`
     pipeline.hmset(ccdTruthKey, ccdTruth)
     await pipeline.exec()
-    return;
+    return
   }
   return
 }
 
-
-export async function getProfileData() {
-
-}
+export async function getProfileData() {}

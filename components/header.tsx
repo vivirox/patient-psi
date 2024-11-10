@@ -1,5 +1,6 @@
 import * as React from 'react'
 import Link from 'next/link'
+import { headers } from 'next/headers'
 
 import { cn } from '@/lib/utils'
 import { auth } from '@/auth'
@@ -17,21 +18,17 @@ import { ChatHistory } from './chat-history'
 import { Session } from '@/lib/types'
 
 async function UserOrLogin() {
-  const session = (await auth()) as Session
+  const session = (await auth()) as Session | null
+
   return (
     <>
       {session?.user ? (
-        <>
-          <SidebarMobile>
-            <ChatHistory userId={session.user.id} />
-
-          </SidebarMobile>
-          {/* <SidebarToggle /> */}
-        </>
+        <SidebarMobile>
+          <ChatHistory userId={session.user.id} />
+        </SidebarMobile>
       ) : (
-        <Link href="/new" rel="nofollow">
-          <IconNextChat className="size-6 mr-2 dark:hidden" inverted />
-          <IconNextChat className="hidden size-6 mr-2 dark:block" />
+        <Link href="/login">
+          <Button>Login</Button>
         </Link>
       )}
       <div className="flex items-center">

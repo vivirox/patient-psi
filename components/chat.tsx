@@ -31,12 +31,12 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
   const [aiState] = useAIState()
 
   const [, setNewChatId] = useLocalStorage('newChatId', id)
-  const [isStarted, setIsStarted] = useState(false);
-  const [patientProfile, setPatientProfile] = useState<PatientProfile>(initialProfile);
-
+  const [isStarted, setIsStarted] = useState(false)
+  const [patientProfile, setPatientProfile] =
+    useState<PatientProfile>(initialProfile)
 
   useEffect(() => {
-    if (session?.user && (!path.includes('chat') && messages.length === 1)) {
+    if (session?.user && !path.includes('chat') && messages.length === 1) {
       window.history.replaceState({}, '', `/chat/${id}`)
     }
   }, [id, path, session?.user, messages])
@@ -62,13 +62,12 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
     useScrollAnchor()
 
   const handleStartedChange = (isStarted: boolean) => {
-    setIsStarted(isStarted);
+    setIsStarted(isStarted)
   }
 
   const handleSetPatientProfile = (patientProfile: PatientProfile) => {
-    setPatientProfile(patientProfile);
+    setPatientProfile(patientProfile)
   }
-
 
   return (
     <>
@@ -78,8 +77,15 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
       >
         {messages.length ? (
           <>
-            <div className={cn('pb-[200px] pt-4 md:pt-10', className)} ref={messagesRef}>
-              <ChatList messages={messages} isShared={false} session={session} />
+            <div
+              className={cn('pb-[200px] pt-4 md:pt-10', className)}
+              ref={messagesRef}
+            >
+              <ChatList
+                messages={messages}
+                isShared={false}
+                session={session}
+              />
               <div className="h-px w-full" ref={visibilityRef} />
             </div>
             <ChatPanel
@@ -94,7 +100,10 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
           <>
             {isStarted ? (
               <>
-                <div className={cn('pb-[200px] pt-4 md:pt-10', className)} ref={messagesRef}>
+                <div
+                  className={cn('pb-[200px] pt-4 md:pt-10', className)}
+                  ref={messagesRef}
+                >
                   <div className="mx-auto max-w-2xl px-4">
                     <div className="flex flex-col gap-2 rounded-lg border bg-background p-8">
                       <h1 className="text-xl font-semibold">
@@ -107,14 +116,19 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
                         {patientProfile.history}
                       </p>
                       <p className="leading-normal pt-1 font-light text-black dark:text-white">
-                        (The relevant history will be shown in the right column throughout the session)
+                        (The relevant history will be shown in the right column
+                        throughout the session)
                       </p>
                       <p className="leading-normal pt-4 font-medium text-black dark:text-white">
-                        Now you may start your session with client <b>{patientProfile.name}</b>.
-                        Please start the session by entering the first greeting to <b>{patientProfile.name}</b> in the textbox below.
+                        Now you may start your session with client{' '}
+                        <b>{patientProfile.name}</b>. Please start the session
+                        by entering the first greeting to{' '}
+                        <b>{patientProfile.name}</b> in the textbox below.
                       </p>
                       <label className="block pt-1 leading-normal font-medium text-red-500">
-                        <span className="font-bold">The expected time of the session is around 10 minutes.</span>
+                        <span className="font-bold">
+                          The expected time of the session is around 10 minutes.
+                        </span>
                       </label>
                     </div>
                   </div>
@@ -126,24 +140,29 @@ export function Chat({ id, className, session, missingKeys }: ChatProps) {
                   isAtBottom={isAtBottom}
                   scrollToBottom={scrollToBottom}
                 />
-              </>) : (
-              <div className={cn('pb-[200px] pt-4 md:pt-10', className)} ref={messagesRef}>
+              </>
+            ) : (
+              <div
+                className={cn('pb-[200px] pt-4 md:pt-10', className)}
+                ref={messagesRef}
+              >
                 <StartSession
                   onStartedChange={handleStartedChange}
-                  onSetPatientProfile={handleSetPatientProfile} />
+                  onSetPatientProfile={handleSetPatientProfile}
+                />
               </div>
-            )
-            }
+            )}
           </>
         )}
-      </div >
-      {
-        messages.length ? (
-          <Sidebar className="peer absolute inset-y-0 z-30 hidden translate-x-full right-0 border-l bg-muted duration-300 ease-in-out data-[state=open]:translate-x-0 lg:flex lg:w-[400px] xl:w-[600px]">
-            {/* @ts-ignore */}
-            <DiagramList userId={session.user.id} chatId={id} />
-          </Sidebar>) : (<></>)
-      }
+      </div>
+      {messages.length && session?.user?.id ? (
+        <Sidebar className="peer absolute inset-y-0 z-30 hidden translate-x-full right-0 border-l bg-muted duration-300 ease-in-out data-[state=open]:translate-x-0 lg:flex lg:w-[400px] xl:w-[600px]">
+          {/* @ts-ignore */}
+          <DiagramList userId={session.user.id} chatId={id} />
+        </Sidebar>
+      ) : (
+        <></>
+      )}
     </>
-  );
+  )
 }

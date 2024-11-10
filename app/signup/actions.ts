@@ -50,7 +50,7 @@ export async function signup(
 ): Promise<Result | undefined> {
   // const email = formData.get('email') as string
   // const password = formData.get('password') as string
-  const participantId = formData.get('participantId') as string;
+  const participantId = formData.get('participantId') as string
 
   const parsedCredentials = z
     .object({
@@ -77,7 +77,7 @@ export async function signup(
 
     try {
       // const result = await createUser(email, hashedPassword, salt)
-      const result = await createUser(participantId);
+      const result = await createUser(participantId)
 
       if (result.resultCode === ResultCode.UserCreated) {
         await signIn('credentials', {
@@ -91,13 +91,15 @@ export async function signup(
       return result
     } catch (error) {
       if (error instanceof AuthError) {
-        return error.type === 'CredentialsSignin' ? {
-          type: 'error',
-          resultCode: ResultCode.InvalidCredentials
-        } : {
-          type: 'error',
-          resultCode: ResultCode.UnknownError
-        };
+        return error.type === 'CredentialsSignin'
+          ? {
+              type: 'error',
+              resultCode: ResultCode.InvalidCredentials
+            }
+          : {
+              type: 'error',
+              resultCode: ResultCode.UnknownError
+            }
       } else {
         return {
           type: 'error',

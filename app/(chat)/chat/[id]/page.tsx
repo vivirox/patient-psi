@@ -17,9 +17,9 @@ export interface ChatPageProps {
 export async function generateMetadata({
   params
 }: ChatPageProps): Promise<Metadata> {
-  const session = await auth()
+  const session = (await auth()) as Session | null
 
-  if (!session?.user) {
+  if (!session || !session.user) {
     return {}
   }
 
@@ -28,9 +28,8 @@ export async function generateMetadata({
     title: chat?.title.toString().slice(0, 50) ?? 'Chat'
   }
 }
-
 export default async function ChatPage({ params }: ChatPageProps) {
-  const session = (await auth()) as Session
+  const session = (await getServerSession(auth())) as Session | null
   const missingKeys = await getMissingKeys()
 
   if (!session?.user) {
@@ -48,9 +47,11 @@ export default async function ChatPage({ params }: ChatPageProps) {
     notFound()
   }
 
-  const filteredMessages = chat.messages.filter((message): message is Message => 
-    ['user', 'system', 'assistant', 'data'].includes(message.role) && message.role !== 'function'
-  );
+  const filteredMessages = chat.messages.filter(
+    (message): message is Message =>
+      ['user', 'system', 'assistant', 'data'].includes(message.role) &&
+      message.role !== 'function'
+  )
 
   return (
     <AI initialAIState={{ chatId: chat.id, messages: filteredMessages }}>
@@ -62,4 +63,9 @@ export default async function ChatPage({ params }: ChatPageProps) {
       />
     </AI>
   )
+}
+function getServerSession(
+  arg0: Promise<null>
+): Session | PromiseLike<Session | null> | null {
+  throw new Error('Function not implemented.')
 }

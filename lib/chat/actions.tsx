@@ -8,16 +8,23 @@ import {
 } from 'ai/rsc'
 import OpenAI from 'openai'
 
-import {
-  nanoid
-} from '@/lib/utils'
+import { nanoid } from '@/lib/utils'
 import { saveChat } from '@/app/actions'
 import { SpinnerMessage, UserMessage, BotMessage } from '@/components/message'
 import { Chat } from '@/lib/types'
 import { auth } from '@/auth'
+import { Session } from 'next-auth'
+
+type CustomSession = Session & {
+  user?: {
+    id: string
+    name?: string | null
+    email?: string | null
+    image?: string | null
+  }
+}
 
 import { getPrompt } from '@/app/api/getDataFromKV'
-
 
 const openai = new OpenAI({
   baseURL: process.env.OPENAI_BASE_URL || 'http://localhost:11434/v1',
@@ -29,7 +36,7 @@ async function testCompletion() {
     model: 'heallama',
     messages: [{ role: 'user', content: 'Why is the sky blue?' }]
   })
-  return completion;
+  return completion
 }
 
 async function submitUserMessage(content: string, type: string) {
@@ -44,7 +51,7 @@ async function submitUserMessage(content: string, type: string) {
       {
         id: nanoid(),
         role: 'user',
-        content,
+        content
       }
     ]
   })
@@ -53,7 +60,7 @@ async function submitUserMessage(content: string, type: string) {
   let textNode: undefined | React.ReactNode
 
   const ui = streamUI({
-    model: 'gpt-4',
+    model: 'heallama',
     provider: openai,
     initial: <SpinnerMessage />,
     messages: [
@@ -67,7 +74,15 @@ async function submitUserMessage(content: string, type: string) {
         name: message.name || ''
       }))
     ],
-    text: ({ content, done, delta }: { content: string, done: boolean, delta: string }) => {
+    text: ({
+      content,
+      done,
+      delta
+    }: {
+      content: string
+      done: boolean
+      delta: string
+    }) => {
       if (!textStream) {
         textStream = createStreamableValue('')
         textNode = <BotMessage content={textStream.value} />
@@ -126,7 +141,7 @@ export const AI = createAI<AIState, UIState>({
   onGetUIState: async () => {
     'use server'
 
-    const session = await auth()
+    const session = (await auth()) as Session | null
 
     if (session?.user) {
       const aiState = getAIState()
@@ -142,12 +157,14 @@ export const AI = createAI<AIState, UIState>({
     'use server'
 
     const session = await auth()
+    if (!session) return
 
-    if (session?.user) {
+    const customSession = session as CustomSession
+    if (customSession?.user) {
       const { chatId, messages } = state
 
       const createdAt = new Date()
-      const userId = session.user.id as string
+      const userId = customSession.user.id
       const path = `/chat/${chatId}`
       const title = messages[0].content.substring(0, 100)
 
@@ -161,7 +178,7 @@ export const AI = createAI<AIState, UIState>({
       }
 
       await saveChat(chat)
-      return;
+      return
     }
     return
   }
@@ -180,7 +197,27 @@ export const getUIStateFromAIState = (aiState: Chat) => {
         )
     }))
 }
-async function* streamUI({ model, provider, initial, messages, text }: { model: string, provider: OpenAI, initial: React.ReactNode, messages: Array<{ role: string, content: string, name?: string }>, text: ({ content, done, delta }: { content: string, done: boolean, delta: string }) => React.ReactNode }) {
+async function* streamUI({
+  model,
+  provider,
+  initial,
+  messages,
+  text
+}: {
+  model: string
+  provider: OpenAI
+  initial: React.ReactNode
+  messages: Array<{ role: string; content: string; name?: string }>
+  text: ({
+    content,
+    done,
+    delta
+  }: {
+    content: string
+    done: boolean
+    delta: string
+  }) => React.ReactNode
+}) {
   const response = await provider.chat.completions.create({
     model,
     messages: messages.map(msg => ({
@@ -190,12 +227,11 @@ async function* streamUI({ model, provider, initial, messages, text }: { model: 
     })),
     stream: true
   })
-  yield initial;
+  yield initial
 
   for await (const chunk of response) {
-    const content = chunk.choices[0].delta.content;
-    const done = chunk.choices[0].finish_reason === 'stop';
-    yield text({ content: content ?? '', done, delta: content ?? '' });
+    const content = chunk.choices[0].delta.content
+    const done = chunk.choices[0].finish_reason === 'stop'
+    yield text({ content: content ?? '', done, delta: content ?? '' })
   }
 }
-

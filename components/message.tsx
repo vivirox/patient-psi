@@ -86,7 +86,6 @@ export function BotMessage({
   )
 }
 
-
 export function SystemMessage({ children }: { children: React.ReactNode }) {
   return (
     <div

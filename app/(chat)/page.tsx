@@ -1,4 +1,4 @@
-import { nanoid } from '@/lib/utils'
+import { nanoid } from 'nanoid'
 import { Chat } from '@/components/chat'
 import { AI } from '@/lib/chat/actions'
 import { auth } from '@/auth'
@@ -11,8 +11,8 @@ export const metadata = {
 
 export default async function IndexPage() {
   const id = nanoid()
-  const session = (await auth()) as Session
   const missingKeys = await getMissingKeys()
+  const session = (await auth()) as unknown as Session
 
   return (
     <AI initialAIState={{ chatId: id, messages: [] }}>
