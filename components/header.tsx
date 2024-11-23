@@ -24,7 +24,6 @@ async function UserOrLogin() {
         <>
           <SidebarMobile>
             <ChatHistory userId={session.user.id} />
-
           </SidebarMobile>
           {/* <SidebarToggle /> */}
         </>

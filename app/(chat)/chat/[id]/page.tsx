@@ -13,12 +13,10 @@ export interface ChatPageProps {
   }
 }
 
-// Update the Message type to exclude "function"
 type Message = {
-  id: string; // Added "id" property
-  role: "user" | "system" | "assistant" | "data"; // Removed "function"
-  content: string;
-  // ... other properties ...
+  id: string
+  role: 'user' | 'system' | 'assistant' | 'data'
+  content: string
 }
 
 export async function generateMetadata({
@@ -55,14 +53,21 @@ export default async function ChatPage({ params }: ChatPageProps) {
     notFound()
   }
 
+  // Await the AI component if it returns a Promise
+  const AIComponent = await AI({
+    initialAIState: { chatId: chat.id, messages: chat.messages as Message[] },
+    children: <></>
+  })
+
   return (
-    <AI initialAIState={{ chatId: chat.id, messages: chat.messages as Message[] }}>
+    <>
+      {AIComponent}
       <Chat
         id={chat.id}
         session={session}
         initialMessages={chat.messages as Message[]}
         missingKeys={missingKeys}
       />
-    </AI>
+    </>
   )
 }
