@@ -1,0 +1,28 @@
+---
+import { Button } from '@/components/ui/button';
+import { IconArrowDown } from '@/components/ui/icons';
+---
+
+<Button
+  variant="outline"
+  size="icon"
+  class="absolute right-4 bottom-4 bg-background transition-opacity opacity-0 group-hover:opacity-100"
+  aria-label="Scroll to bottom"
+  data-scroll-bottom
+>
+  <IconArrowDown />
+</Button>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const scrollButton = document.querySelector('[data-scroll-bottom]');
+    if (scrollButton) {
+      scrollButton.addEventListener('click', () => {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'smooth'
+        });
+      });
+    }
+  });
+</script>

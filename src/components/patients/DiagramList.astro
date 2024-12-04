@@ -1,0 +1,53 @@
+---
+import DiagramCheckbox from './DiagramCheckbox.astro';
+
+const helplessItems = [
+  { id: 'helpless1', label: 'I feel powerless to change my situation' },
+  { id: 'helpless2', label: 'I cannot cope with my problems' },
+  { id: 'helpless3', label: 'I am unable to help myself' },
+  { id: 'helpless4', label: 'Nothing I do makes a difference' }
+];
+
+const unlovableItems = [
+  { id: 'unlovable1', label: 'Nobody cares about me' },
+  { id: 'unlovable2', label: 'I am unworthy of love' },
+  { id: 'unlovable3', label: 'I will always be alone' },
+  { id: 'unlovable4', label: 'I am not good enough for others' }
+];
+
+const worthlessItems = [
+  { id: 'worthless1', label: 'I am a failure' },
+  { id: 'worthless2', label: 'I have no value' },
+  { id: 'worthless3', label: 'I am worthless' },
+  { id: 'worthless4', label: 'I contribute nothing to the world' }
+];
+
+interface Props {
+  className?: string;
+}
+
+const { className } = Astro.props;
+---
+
+<div class:list={['space-y-8', className]}>
+  <DiagramCheckbox
+    name="helpless"
+    title="Helpless"
+    description="Select the thoughts that resonate with feeling helpless"
+    items={helplessItems}
+  />
+  
+  <DiagramCheckbox
+    name="unlovable"
+    title="Unlovable"
+    description="Select the thoughts that resonate with feeling unlovable"
+    items={unlovableItems}
+  />
+  
+  <DiagramCheckbox
+    name="worthless"
+    title="Worthless"
+    description="Select the thoughts that resonate with feeling worthless"
+    items={worthlessItems}
+  />
+</div>

@@ -1,0 +1,38 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import NewChatForm from '../../../../components/chat/NewChatForm';
+import { getUserFromRequest } from '../../../../lib/auth';
+
+const userId = await getUserFromRequest(Astro.request);
+if (!userId) {
+  return Astro.redirect('/login');
+}
+
+const { patientId } = Astro.params;
+---
+
+<Layout title="New Chat - Patient PSI">
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="mb-6">
+        <a
+          href={`/patients/${patientId}/chats`}
+          class="text-indigo-600 hover:text-indigo-900"
+        >
+          ← Back to Chats
+        </a>
+      </div>
+      <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">New Chat</h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">
+            Start a new chat session.
+          </p>
+        </div>
+        <div class="border-t border-gray-200">
+          <NewChatForm client:load patientId={patientId} />
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

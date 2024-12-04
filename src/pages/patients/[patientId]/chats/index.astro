@@ -1,0 +1,37 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import { ChatClient } from '../../../../components/chat/chat-client';
+import { getUserFromRequest } from '../../../../lib/auth';
+import { getByUserId } from '../../../../lib/db';
+import { chats } from '../../../../../drizzle/schema';
+
+const userId = await getUserFromRequest(Astro.request);
+if (!userId) {
+  return Astro.redirect('/login');
+}
+
+const { patientId } = Astro.params;
+if (!patientId) {
+  return new Response('Patient ID is required', { status: 400 });
+}
+
+// Get all chats for this patient
+const patientChats = await getByUserId(chats, userId);
+---
+
+<Layout title="Chats - Patient PSI">
+  <div class="h-[calc(100vh-4rem)] overflow-hidden">
+    <ChatClient
+      client:load
+      initialChats={patientChats}
+      patientId={patientId}
+    />
+  </div>
+</Layout>
+
+<style>
+  /* Remove default padding from Layout */
+  :global(main) {
+    padding: 0 !important;
+  }
+</style>

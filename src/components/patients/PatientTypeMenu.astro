@@ -1,0 +1,103 @@
+---
+import { Button } from '../ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '../ui/dropdown-menu';
+
+const patientTypes = [
+  { id: 'depression', label: 'Depression' },
+  { id: 'anxiety', label: 'Anxiety' },
+  { id: 'stress', label: 'Stress' },
+  { id: 'general', label: 'General' }
+];
+
+interface Props {
+  selectedType?: string;
+  onSelect?: (type: string) => void;
+  loading?: boolean;
+}
+
+const { selectedType = 'general', loading = false } = Astro.props;
+const selectedLabel = patientTypes.find(t => t.id === selectedType)?.label || 'Select Type';
+---
+
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button 
+      variant="outline" 
+      className="w-[200px] justify-start relative transition-all duration-200 ease-in-out"
+      disabled={loading}
+      aria-label={`Selected patient type: ${selectedLabel}`}
+      aria-haspopup="true"
+      role="combobox"
+    >
+      <span class="flex items-center gap-2">
+        {loading && (
+          <span class="animate-spin h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full"/>
+        )}
+        {selectedLabel}
+      </span>
+    </Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent 
+    align="start" 
+    className="w-[200px] transition-all duration-200 ease-in-out"
+    role="listbox"
+    aria-label="Patient type options"
+  >
+    {patientTypes.map(type => (
+      <DropdownMenuItem
+        key={type.id}
+        className="cursor-pointer transition-colors duration-150 ease-in-out"
+        data-type-id={type.id}
+        role="option"
+        aria-selected={type.id === selectedType}
+        tabIndex={0}
+      >
+        {type.label}
+      </DropdownMenuItem>
+    ))}
+  </DropdownMenuContent>
+</DropdownMenu>
+
+<script>
+  function handleKeyDown(e: KeyboardEvent, item: Element) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      item.dispatchEvent(new MouseEvent('click'));
+    }
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    const menuItems = document.querySelectorAll('[data-type-id]');
+    menuItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const typeId = item.getAttribute('data-type-id');
+        const event = new CustomEvent('patientTypeSelect', { 
+          detail: { typeId },
+          bubbles: true 
+        });
+        item.dispatchEvent(event);
+      });
+
+      // Add keyboard support with proper type assertion
+      item.addEventListener('keydown', ((e: Event) => {
+        handleKeyDown(e as KeyboardEvent, item);
+      }) as EventListener);
+    });
+  });
+</script>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  :global(.dropdown-menu-content) {
+    animation: fadeIn 0.2s ease-out;
+  }
+</style>

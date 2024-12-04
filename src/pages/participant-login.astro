@@ -1,0 +1,14 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ParticipantLoginForm from '../components/auth/ParticipantLoginForm';
+import { redirectIfAuthenticated } from '../middleware/auth';
+
+const authResult = await redirectIfAuthenticated({ request });
+if (authResult.redirect) {
+  return Astro.redirect(authResult.url);
+}
+---
+
+<Layout title="Participant Login">
+  <ParticipantLoginForm client:load />
+</Layout>

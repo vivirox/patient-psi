@@ -1,0 +1,28 @@
+{
+    "life_history": "The patient has been experiencing anxiety and depression for several years, with a significant event being their mother's death when they were in their early 20s.",
+    "core_beliefs": "Unlovable belief",
+    "core_belief_description": "I am unlovable, unattractive, unwanted, and bound to be rejected.",
+    "intermediate_beliefs": "I should be able to do everything on my own, I'm a failure if I ask for help.",
+    "intermediate_beliefs_during_depression": "I'm worthless, a waste, and not deserving of love or happiness when I'm depressed.",
+    "coping_strategies": "Avoidance, substance abuse, excessive self-criticism",
+    "cognitive_models": [
+        {
+            "situation": "The patient is alone in their apartment, feeling overwhelmed by their emotions.",
+            "automatic_thoughts": "I'll never be able to overcome my anxiety and depression.",
+            "emotion": "Sadness, hopelessness",
+            "behavior": "Staying in bed for days, avoiding social interactions"
+        },
+        {
+            "situation": "The patient is talking to their therapist about their feelings.",
+            "automatic_thoughts": "I'm not worthy of love or support.",
+            "emotion": "Anxiety, shame",
+            "behavior": "Defensiveness, minimizing their feelings"
+        },
+        {
+            "situation": "The patient is thinking about past failures and perceived shortcomings.",
+            "automatic_thoughts": "I'll never be able to succeed in life.",
+            "emotion": "Anger, frustration",
+            "behavior": "Ruminating on negative thoughts, getting angry with themselves"
+        }
+    ]
+}

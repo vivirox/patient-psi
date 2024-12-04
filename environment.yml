@@ -1,0 +1,17 @@
+name: patient-psi
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+  - redis-py
+  - psutil
+  - python-dotenv
+  - pydantic
+  - pip:
+    - langchain-core>=0.1.5
+    - langchain-ollama>=0.0.1
+    - aioredis>=2.0.1
+    - tenacity>=8.2.3
+    - structlog>=24.1.0

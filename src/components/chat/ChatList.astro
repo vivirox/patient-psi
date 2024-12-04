@@ -1,0 +1,17 @@
+---
+import type { Message } from '@/lib/types';
+import ChatMessage from './ChatMessage.astro';
+
+interface Props {
+  messages: Message[];
+  className?: string;
+}
+
+const { messages, className } = Astro.props;
+---
+
+<div class:list={['relative mx-auto max-w-2xl px-4', className]}>
+  {messages.map(message => (
+    <ChatMessage message={message} />
+  ))}
+</div>

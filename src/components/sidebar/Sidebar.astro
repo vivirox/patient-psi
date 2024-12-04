@@ -1,0 +1,22 @@
+---
+import SidebarDesktop from './SidebarDesktop.astro';
+import { SidebarMobile } from './SidebarMobile';
+import SidebarActions from './SidebarActions.astro';
+import ChatHistory from '../chat/ChatHistory.astro';
+import { getUser } from '@/lib/auth';
+import { getChats } from '@/lib/chat';
+
+const user = await getUser();
+const chats = user ? await getChats(user.id) : [];
+---
+
+<SidebarMobile client:load>
+  <ChatHistory userId={user?.id} chats={chats} />
+</SidebarMobile>
+
+<SidebarDesktop>
+  <div class="flex flex-col h-full">
+    <SidebarActions />
+    <ChatHistory userId={user?.id} chats={chats} />
+  </div>
+</SidebarDesktop>

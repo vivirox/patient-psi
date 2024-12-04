@@ -1,0 +1,28 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PatientDetail from '../../components/patients/PatientDetail';
+import { getUserFromRequest } from '../../lib/auth';
+
+const userId = await getUserFromRequest(Astro.request);
+if (!userId) {
+  return Astro.redirect('/login');
+}
+
+const { id } = Astro.params;
+---
+
+<Layout title="Patient Details - Patient PSI">
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="mb-6">
+        <a
+          href="/patients"
+          class="text-indigo-600 hover:text-indigo-900"
+        >
+          ← Back to Patients
+        </a>
+      </div>
+      <PatientDetail client:load patientId={id} />
+    </div>
+  </div>
+</Layout>

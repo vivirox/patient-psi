@@ -1,0 +1,15 @@
+---
+import { cn } from '@/lib/utils';
+
+interface Props {
+  className?: string;
+}
+
+const { className } = Astro.props;
+---
+
+<div class:list={['hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col', className]}>
+  <div class="flex flex-col flex-1 gap-4 p-4 bg-muted/50">
+    <slot />
+  </div>
+</div>

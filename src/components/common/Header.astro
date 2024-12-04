@@ -1,0 +1,36 @@
+---
+import { getUser } from '@/lib/auth'
+import { Button } from '@/components/ui/button'
+import { IconNextChat, IconSeparator } from '@/components/ui/icons'
+import UserMenu from './UserMenu.astro'
+
+const user = await getUser()
+---
+
+<header class="sticky top-0 z-50 flex items-center justify-between w-full h-16 px-4 border-b shrink-0 bg-gradient-to-b from-background/10 via-background/50 to-background/80 backdrop-blur-xl">
+  <div class="flex items-center">
+    {user ? (
+      <>
+        <!-- Mobile sidebar will be added later -->
+      </>
+    ) : (
+      <a href="/new" rel="nofollow">
+        <IconNextChat className="size-6 mr-2 dark:hidden" inverted />
+        <IconNextChat className="hidden size-6 mr-2 dark:block" />
+      </a>
+    )}
+    <div class="flex items-center">
+      <IconSeparator className="size-6 text-muted-foreground/50" />
+      {user ? (
+        <UserMenu user={user} />
+      ) : (
+        <Button variant="link" className="-ml-2">
+          <a href="/login">Login</a>
+        </Button>
+      )}
+    </div>
+  </div>
+  <div class="flex items-center justify-end space-x-2">
+    <!-- Theme toggle will be added here -->
+  </div>
+</header>

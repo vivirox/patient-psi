@@ -1,0 +1,50 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProfileSettings from '../../components/profile/ProfileSettings';
+import { getUserFromRequest } from '../../lib/auth';
+import { getUserProfile } from '../../lib/user-profile';
+
+// Get user profile data
+const userId = await getUserFromRequest(Astro.request);
+if (!userId) {
+  return Astro.redirect('/login');
+}
+
+const profile = await getUserProfile(userId);
+if (!profile) {
+  return new Response('Profile not found', { status: 404 });
+}
+---
+
+<Layout title="Profile Settings">
+  <div class="container mx-auto py-8">
+    <ProfileSettings client:load initialProfile={profile} onSave={async (updates) => {
+      const response = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+    }} />
+  </div>
+</Layout>
+
+<script>
+  // Handle theme changes
+  document.addEventListener('astro:page-load', () => {
+    const themeSelect = document.getElementById('theme') as HTMLSelectElement;
+    if (themeSelect) {
+      themeSelect.addEventListener('change', (e) => {
+        const theme = (e.target as HTMLSelectElement).value;
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(theme);
+        localStorage.setItem('theme', theme);
+      });
+    }
+  });
+</script>

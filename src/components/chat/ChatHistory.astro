@@ -1,0 +1,49 @@
+---
+import type { Chat } from '@/lib/types';
+import { Button } from '@/components/ui/button';
+import { IconMessage, IconTrash } from '@/components/ui/icons';
+import { cn } from '@/lib/utils';
+
+interface Props {
+  chats?: Chat[];
+  userId: string;
+}
+
+const { chats = [], userId } = Astro.props;
+---
+
+<div class="flex flex-col h-full">
+  <div class="flex-1 overflow-auto">
+    {chats.length ? (
+      <div class="space-y-2 px-2">
+        {chats.map(chat => (
+          <a
+            href={`/chat/${chat.id}`}
+            class={cn(
+              'flex items-center space-x-2 rounded-lg px-2 py-1.5 text-sm transition-colors duration-200 hover:bg-accent hover:text-accent-foreground',
+              {
+                'bg-accent text-accent-foreground': chat.id === userId
+              }
+            )}
+          >
+            <IconMessage className="shrink-0" />
+            <span class="flex-1 truncate">{chat.title}</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="p-8 text-center">
+        <p class="text-sm text-muted-foreground">No chat history</p>
+      </div>
+    )}
+  </div>
+  <div class="flex items-center justify-between p-4">
+    <form action="/api/chat/clear" method="POST">
+      <input type="hidden" name="userId" value={userId} />
+      <Button type="submit" variant="ghost" size="icon">
+        <IconTrash />
+        <span class="sr-only">Clear chat history</span>
+      </Button>
+    </form>
+  </div>
+</div>
